@@ -1,0 +1,19 @@
+{% extends "postingtime/base.html" %}
+
+{% block content %}
+<main role="main" class="inner cover">
+    <h1 class="cover-heading">{% block heading %}When should you post in a subreddit to maximize karma potential?{% endblock %}</h1>
+    <p class="lead">{% block lead %}Enter the subreddit of interest in the form below and we'll suggest the optimal posting timeframe.{% endblock %}</p>
+    {% block innercontent %}
+    <div class="content">
+    <p class="lead">
+    <form action="{% url 'index' %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-lg btn-secondary" value="Tell me!" />
+    </form>
+    </p>
+    </div>
+    {% endblock %}
+</main>
+{% endblock %}
