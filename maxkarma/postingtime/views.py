@@ -24,11 +24,13 @@ def index(request):
 
 @cache_page(None)
 def get_subreddit(request, subreddit):
-    lo, hi = get_recommendation(subreddit)
+    lo, hi, img = get_recommendation(subreddit)
     context = {
         'recommendation':
         f'We recommend posting between {hour_to_time(lo)} and {hour_to_time(hi)} UTC.',
         'subreddit':
         f'{subreddit}',
+        'img':
+        img
     }
     return render(request, 'postingtime/subreddit.html', context)

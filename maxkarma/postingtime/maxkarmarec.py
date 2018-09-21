@@ -1,6 +1,9 @@
 # coding: utf-8
 # # Analyze the relationship between a post getting karma and the the time the post was made
 
+import io
+import base64
+
 import scipy as sc
 import pandas as pd
 import seaborn as sns
@@ -14,6 +17,7 @@ import pomegranate
 from pomegranate import *
 
 import pymc3
+
 
 def get_recommendation(subreddit):
     df = pd.DataFrame
@@ -34,6 +38,7 @@ def get_recommendation(subreddit):
 
     # data.plot.hist(x='hour', y='score')
     X = data[data.score > sc.percentile(data.score, 80)]
+
     # make_plots(X)
 
     def make_gmm(n_components=3, shift=0):
@@ -55,4 +60,15 @@ def get_recommendation(subreddit):
     p = 10
     lo, hi = pymc3.stats.hpd(samples, alpha=1 - p / 100)
     # print(f'We recommend posting between {lo} and {hi} for a benefit of {round(100*(data[[lo<x<hi for x in data.hour]].score.mean()/data.score.mean()-1))}%')
-    return (lo, hi)
+    img = io.BytesIO()
+    plot = sns.distplot(samples)
+    time_now = datetime.datetime.now().hour + datetime.datetime.now().minute/60
+    plt.axvline(x=time_now)
+    plot = plot.get_figure()
+    print(plot.savefig)
+    plot = plot.savefig(img, format='png')
+    img.seek(0)
+    b64img = base64.encodebytes(img.getvalue()).decode()
+    del img, plot
+    plt.clf()
+    return (lo, hi, b64img)
